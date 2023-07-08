@@ -11,7 +11,9 @@ const errorHandler = (err, req, res, next) => {
   if (
     err.name === "Email is required" ||
     err.name === "Password is required" ||
-    err.name === "Name is required"
+    err.name === "Name is required" ||
+    err.name === "total is required" ||
+    err.name === "price is required"
   ) {
     code = 400;
     message = err.name;
@@ -22,7 +24,12 @@ const errorHandler = (err, req, res, next) => {
     message = "Invalid Token";
   }
 
-  if (err.name === "You are not auhorized") {
+  if (err.name === "Name product can't be the same") {
+    code = 403;
+    message = "Name product is already";
+  }
+
+  if (err.name === "You are not auhorized" || err.name === "Order too much") {
     code = 403;
     message = err.name;
   }
