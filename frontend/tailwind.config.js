@@ -3,6 +3,7 @@ export default {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     container: {
+      center: true,
       padding: {
         DEFAULT: "1rem",
         sm: "2rem",
@@ -14,6 +15,7 @@ export default {
     extend: {
       backgroundImage: {
         login: "url('/assets/bg_login.jpg')",
+        "empty-data": "url('/assets/empty_data.jpg')",
       },
       colors: {
         base: {

@@ -1,7 +1,6 @@
 <script>
 import Navbar from "../components/Navbar.vue";
 import axios from "axios";
-import { BiCart3 } from "oh-vue-icons/icons";
 
 export default {
   name: "product_view",
@@ -13,7 +12,6 @@ export default {
       data: [],
       baseUrl: "http://localhost:3001/",
       one_data: {},
-      order: false,
       create_new_product: false,
       product: {
         name: "",
@@ -58,11 +56,43 @@ export default {
           text: "Create product successfully",
         });
       } catch (error) {
-        console.log(error);
+        this.$swal({
+          icon: "error",
+          text: "Create product error",
+        });
       }
     },
-    modalOrder() {
-      this.order = !this.order;
+    async order(id) {
+      try {
+        await axios.post(
+          this.baseUrl + "product/order",
+          {
+            productId: id,
+          },
+          {
+            headers: {
+              access_token: localStorage.getItem("access_token"),
+            },
+          }
+        );
+
+        this.$swal({
+          icon: "success",
+          text: "Success order",
+        });
+      } catch (error) {
+        if (error.response?.status === 400) {
+          this.$swal({
+            icon: "error",
+            text: error.response.data.message,
+          });
+        } else {
+          this.$swal({
+            icon: "error",
+            text: "order error",
+          });
+        }
+      }
     },
     modalCreateProduct() {
       this.create_new_product = !this.create_new_product;
@@ -79,7 +109,7 @@ export default {
     <Navbar />
 
     <div class="container">
-      <div class="grid grid-cols-4 gap-10 py-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 py-20">
         <div
           v-for="(e, i) in data"
           :key="i"
@@ -104,7 +134,7 @@ export default {
 
             <div
               class="hover:text-gray-500 cursor-pointer flex"
-              @click="modalOrder"
+              @click="() => order(e.id)"
             >
               <v-icon name="bi-cart3" scale="1" />
             </div>

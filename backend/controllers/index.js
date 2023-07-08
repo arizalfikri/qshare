@@ -119,15 +119,26 @@ class Controller {
       const { productId } = req.body;
       const userId = req.user.id;
 
-      const newOrder = await Order.create({
-        ProductId: productId,
-        UserId: userId,
+      const findOrder = await Order.findOne({
+        where: {
+          UserId: userId,
+          ProductId: productId,
+        },
       });
 
-      const result = {
-        ...newOrder,
-      };
-      res.status(201).json(result);
+      if (!findOrder || findOrder === null) {
+        const newOrder = await Order.create({
+          ProductId: productId,
+          UserId: userId,
+        });
+
+        const result = {
+          ...newOrder,
+        };
+        res.status(201).json(result);
+      } else {
+        throw { name: "Already on order" };
+      }
     } catch (error) {
       next(error);
     }
@@ -137,10 +148,11 @@ class Controller {
     try {
       // const use
       const userId = req.user.id;
-      const Orders = await Order.findAll({
+      const Orders = await User.findOne({
         where: {
-          UserId: userId,
+          id: userId,
         },
+        include: [Product],
       });
 
       res.status(200).json(Orders);
