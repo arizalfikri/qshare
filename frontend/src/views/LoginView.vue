@@ -1,7 +1,12 @@
 <script>
+import { RouterLink } from "vue-router";
 import axios from "axios";
+
 export default {
   name: "login_view",
+  components: {
+    RouterLink,
+  },
   data() {
     return {
       email: "",
@@ -107,7 +112,9 @@ export default {
 
         <div class="flex flex-wrap mt-3 text-sm gap-1">
           <p>Don't have an account yet ?</p>
-          <a href="" class="underline text-base">Register Here</a>
+          <RouterLink to="/register">
+            <a href="" class="underline text-base">Register Here</a>
+          </RouterLink>
         </div>
       </div>
     </div>

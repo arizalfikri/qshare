@@ -46,16 +46,16 @@ class Controller {
     try {
       const { email, password, name } = req.body;
 
+      if (!name) {
+        throw { name: "Name is required" };
+      }
+
       if (!email) {
         throw { name: "Email is required" };
       }
 
       if (!password) {
         throw { name: "Password is required" };
-      }
-
-      if (!name) {
-        throw { name: "Name is required" };
       }
 
       const newUser = await User.create({
