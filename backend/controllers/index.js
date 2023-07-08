@@ -36,6 +36,7 @@ class Controller {
       res.status(200).json({
         access_token: token,
         name: findUser.name,
+        id_user: findUser.id,
       });
     } catch (error) {
       next(error);
@@ -76,10 +77,9 @@ class Controller {
 
   static async createProduct(req, res, next) {
     try {
-      const { name, total, price } = req.body;
+      const { name, price } = req.body;
 
       if (!name) throw { name: "Name is required" };
-      if (!total) throw { name: "total is required" };
       if (!price) throw { name: "price is required" };
 
       const duplicateProduct = await Product.findOne({
@@ -91,7 +91,6 @@ class Controller {
 
       const newProduct = await Product.create({
         name,
-        total,
         price,
       });
 
@@ -117,40 +116,18 @@ class Controller {
 
   static async createOrder(req, res, next) {
     try {
-      const { total, productId } = req.body;
+      const { productId } = req.body;
       const userId = req.user.id;
 
-      const existingProduct = await Product.findOne({
-        where: {
-          id: productId,
-        },
+      const newOrder = await Order.create({
+        ProductId: productId,
+        UserId: userId,
       });
 
-      if (existingProduct.total < total) throw { name: "Order too much" };
-      const updateProduct = await Product.update(
-        { total: existingProduct.total - total },
-        {
-          where: {
-            id: productId,
-          },
-        }
-      );
-
-      if (updateProduct[0] === 1) {
-        const newOrder = await Order.create({
-          ProductId: productId,
-          UserId: userId,
-          total: total,
-          total_price: total * Number(existingProduct.price),
-        });
-
-        const result = {
-          ...newOrder,
-        };
-        res.status(201).json(result);
-      } else {
-        throw { name: "Error update product" };
-      }
+      const result = {
+        ...newOrder,
+      };
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }

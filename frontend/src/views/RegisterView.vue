@@ -14,9 +14,9 @@ export default {
       name: "",
       baseUrl: "http://localhost:3001/",
       error: {
+        name: "",
         email: "",
         password: "",
-        name: "",
       },
     };
   },
@@ -27,9 +27,9 @@ export default {
           method: "POST",
           url: this.baseUrl + "register",
           data: {
+            name: this.name,
             email: this.email,
             password: this.password,
-            name: this.name,
           },
         });
 

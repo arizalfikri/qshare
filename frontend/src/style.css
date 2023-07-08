@@ -8,7 +8,7 @@
   }
 
   label {
-    @apply capitalize font-semibold
+    @apply capitalize
   }
 
   .btn-confirm {
