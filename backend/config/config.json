@@ -1,8 +1,8 @@
 {
   "development": {
-    "username": "",
+    "username": "postgres",
     "password": "user",
-    "database": "db_qshare",
+    "database": "db_qhasre",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
