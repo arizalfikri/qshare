@@ -21,7 +21,6 @@ const authentif = async (req, res, next) => {
       id: userLogged.id,
       email: userLogged.email,
       name: userLogged.name,
-      role: userLogged.role,
       createdAt: userLogged.createdAt,
     };
     next();
