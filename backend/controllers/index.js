@@ -77,10 +77,11 @@ class Controller {
 
   static async createProduct(req, res, next) {
     try {
-      const { name, price } = req.body;
+      const { name, price, quantity } = req.body;
 
       if (!name) throw { name: "Name is required" };
-      if (!price) throw { name: "price is required" };
+      if (!price) throw { name: "Price is required" };
+      if (!quantity) throw { name: "Quantity is required" };
 
       const duplicateProduct = await Product.findOne({
         where: {
@@ -92,6 +93,7 @@ class Controller {
       const newProduct = await Product.create({
         name,
         price,
+        quantity,
       });
 
       const result = {
@@ -116,7 +118,8 @@ class Controller {
 
   static async createOrder(req, res, next) {
     try {
-      const { productId } = req.body;
+      const { productId, quantity } = req.body;
+      console.log(productId);
       const userId = req.user.id;
 
       const findOrder = await Order.findOne({
@@ -125,11 +128,32 @@ class Controller {
           ProductId: productId,
         },
       });
+      const exitingProduct = await Product.findOne({
+        where: {
+          id: productId,
+        },
+      });
+
+      if (exitingProduct.quantity === 0) throw { name: "product run out" };
+      if (exitingProduct.quantity < quantity) throw { name: "too many orders" };
+
+      await Product.update(
+        {
+          quantity: exitingProduct.quantity - quantity,
+        },
+        {
+          where: {
+            id: productId,
+          },
+        }
+      );
 
       if (!findOrder || findOrder === null) {
         const newOrder = await Order.create({
           ProductId: productId,
           UserId: userId,
+          price_total: quantity * Number(exitingProduct.price),
+          quantity,
         });
 
         const result = {
@@ -137,7 +161,24 @@ class Controller {
         };
         res.status(201).json(result);
       } else {
-        throw { name: "Already on order" };
+        const newOrder = await Order.update(
+          {
+            price_total:
+              findOrder.price_total + quantity * Number(exitingProduct.price),
+            quantity: findOrder.quantity + quantity,
+          },
+          {
+            where: {
+              UserId: userId,
+              ProductId: productId,
+            },
+          }
+        );
+
+        const result = {
+          ...newOrder,
+        };
+        res.status(201).json(result);
       }
     } catch (error) {
       next(error);

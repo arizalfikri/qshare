@@ -39,7 +39,7 @@ export default {
     <div class="container py-20">
       <div
         v-if="data.length > 0"
-        class="bg-white grid rounded overflow-hidden shadow-md grid-cols-2 md:grid-cols-3 items-center mb-5"
+        class="bg-white grid rounded overflow-hidden shadow-md grid-cols-2 md:grid-cols-2 items-center mb-5"
         v-for="(order, i) in data"
         :key="i"
       >
@@ -49,11 +49,12 @@ export default {
           <h3>{{ order.name }}</h3>
         </div>
 
-        <div class="col-span-2 py-5 text-end px-10">
+        <div class="col-span-2 md:col-span-1 py-5 text-end px-10">
+          <p>{{ order.Order.quantity }} pcs</p>
           <p>
             Rp.
             {{
-              order.price
+              order.Order.price_total
                 .toString()
                 .replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.")
             }}

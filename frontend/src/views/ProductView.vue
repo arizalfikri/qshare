@@ -13,9 +13,15 @@ export default {
       baseUrl: "http://localhost:3001/",
       one_data: {},
       create_new_product: false,
+      isOrder: false,
       product: {
         name: "",
         price: "",
+        quantity: 0,
+      },
+      dataOrder: {
+        quantity: 0,
+        productId: 0,
       },
     };
   },
@@ -40,6 +46,7 @@ export default {
           {
             name: this.product.name,
             price: this.product.price,
+            quantity: this.product.quantity,
           },
           {
             headers: {
@@ -62,12 +69,13 @@ export default {
         });
       }
     },
-    async order(id) {
+    async order() {
       try {
         await axios.post(
           this.baseUrl + "product/order",
           {
-            productId: id,
+            productId: this.dataOrder.productId,
+            quantity: this.dataOrder.quantity,
           },
           {
             headers: {
@@ -75,7 +83,8 @@ export default {
             },
           }
         );
-
+        this.products();
+        this.isOrder = !this.isOrder;
         this.$swal({
           icon: "success",
           text: "Success order",
@@ -96,6 +105,10 @@ export default {
     },
     modalCreateProduct() {
       this.create_new_product = !this.create_new_product;
+    },
+    modalOrder(id) {
+      this.dataOrder.productId = id;
+      this.isOrder = !this.isOrder;
     },
   },
   async created() {
@@ -118,10 +131,11 @@ export default {
           <div
             class="h-40 flex justify-center items-center text-4xl bg-slate-200 font-bold"
           >
-            {{ e.name }}
+            <p>{{ e.name }}</p>
           </div>
           <div class="p-5 flex justify-between items-end">
             <div>
+              <p>{{ e.quantity }} pcs</p>
               <p>
                 Rp.
                 {{
@@ -134,7 +148,7 @@ export default {
 
             <div
               class="hover:text-gray-500 cursor-pointer flex"
-              @click="() => order(e.id)"
+              @click="() => modalOrder(e.id)"
             >
               <v-icon name="bi-cart3" scale="1" />
             </div>
@@ -163,7 +177,7 @@ export default {
         @click="modalCreateProduct"
       ></div>
 
-      <div class="bg-white rounded z-50 w-1/4 p-5">
+      <div class="bg-white rounded z-50 w-11/12 md:w-1/2 lg:w-1/4 p-5">
         <h4 class="text-center font-bold text-lg uppercase">create product</h4>
         <form action="" class="w-full mt-5" @submit.prevent="createProduct">
           <div>
@@ -181,15 +195,58 @@ export default {
             <label for="">price</label>
             <input
               type="text"
-              name="name"
+              name="price"
               placeholder="ext: 200000"
               class="w-full"
               v-model="product.price"
             />
           </div>
 
+          <div class="mt-3">
+            <label for="">quantity</label>
+            <input
+              type="number"
+              name="quantity"
+              placeholder="0"
+              class="w-full"
+              v-model="product.quantity"
+            />
+          </div>
+
           <div class="mt-5">
             <button class="btn-confirm" type="submit">create</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      class="absolute flex justify-center items-center inset-0"
+      v-if="isOrder"
+    >
+      <div
+        class="absolute inset-0 bg-slate-400 bg-opacity-25"
+        @click="modalOrder"
+      ></div>
+
+      <div
+        class="bg-white sticky top-20 rounded z-50 w-11/12 md:w-1/2 lg:w-1/4 p-5"
+      >
+        <h4 class="text-center font-bold text-lg uppercase">create product</h4>
+        <form action="" class="w-full mt-5" @submit.prevent="order">
+          <div class="mt-3">
+            <label for="">quantity</label>
+            <input
+              type="number"
+              name="quantity"
+              placeholder="0"
+              class="w-full"
+              v-model="dataOrder.quantity"
+            />
+          </div>
+
+          <div class="mt-5">
+            <button class="btn-confirm" type="submit">order</button>
           </div>
         </form>
       </div>

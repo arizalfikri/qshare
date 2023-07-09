@@ -12,9 +12,10 @@ const errorHandler = (err, req, res, next) => {
     err.name === "Email is required" ||
     err.name === "Password is required" ||
     err.name === "Name is required" ||
-    err.name === "total is required" ||
-    err.name === "price is required" ||
-    err.name === "Already on order"
+    err.name === "Quantity is required" ||
+    err.name === "Price is required" ||
+    err.name === "too many orders" ||
+    err.name === "product run out"
   ) {
     code = 400;
     message = err.name;
