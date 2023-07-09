@@ -14,6 +14,7 @@ export default {
       one_data: {},
       create_new_product: false,
       isOrder: false,
+      isLoading: false,
       product: {
         name: "",
         price: "",
@@ -41,7 +42,7 @@ export default {
     },
     async createProduct() {
       try {
-        const response = await axios.post(
+        await axios.post(
           this.baseUrl + "product",
           {
             name: this.product.name,
@@ -55,7 +56,7 @@ export default {
           }
         );
 
-        this.products();
+        await this.products();
         this.create_new_product = !this.create_new_product;
 
         this.$swal({
@@ -112,7 +113,8 @@ export default {
     },
   },
   async created() {
-    this.products();
+    this.isLoading = true;
+    this.products().finally(() => (this.isLoading = false));
   },
 };
 </script>
@@ -121,8 +123,8 @@ export default {
   <main class="min-h-screen relative bg-gray-500 bg-opacity-10">
     <Navbar />
 
-    <div class="container">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 py-20">
+    <div class="container py-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         <div
           v-for="(e, i) in data"
           :key="i"
@@ -250,6 +252,13 @@ export default {
           </div>
         </form>
       </div>
+    </div>
+
+    <div
+      class="absolute flex justify-center items-center inset-0"
+      v-if="isLoading"
+    >
+      <v-icon name="la-spinner-solid" scale="5" animation="spin-pulse" />
     </div>
   </main>
 </template>

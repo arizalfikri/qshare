@@ -10,9 +10,16 @@ import {
   HiSolidUserCircle,
   BiPlusCircle,
   LaWindowClose,
+  LaSpinnerSolid,
 } from "oh-vue-icons/icons";
 
-addIcons(BiCart3, HiSolidUserCircle, BiPlusCircle, LaWindowClose);
+addIcons(
+  BiCart3,
+  HiSolidUserCircle,
+  BiPlusCircle,
+  LaWindowClose,
+  LaSpinnerSolid
+);
 const app = createApp(App);
 app.use(router);
 app.use(VueSweetalert2);

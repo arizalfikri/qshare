@@ -11,6 +11,7 @@ export default {
     return {
       data: [],
       baseUrl: "http://localhost:3001/",
+      isLoading: false,
     };
   },
   methods: {
@@ -28,7 +29,8 @@ export default {
     },
   },
   async created() {
-    this.orders();
+    this.isLoading = true;
+    await this.orders().finally(() => (this.isLoading = false));
   },
 };
 </script>
@@ -36,7 +38,7 @@ export default {
 <template>
   <main class="min-h-screen relative bg-gray-500 bg-opacity-10">
     <Navbar />
-    <div class="container py-20">
+    <div v-if="!isLoading" class="container py-20">
       <div
         v-if="data.length > 0"
         class="bg-white grid rounded overflow-hidden shadow-md grid-cols-2 md:grid-cols-2 items-center mb-5"
@@ -66,6 +68,10 @@ export default {
         v-else
         class="bg-empty-data h-[30rem] w-full md:w-4/5 lg:w-1/2 m-auto bg-no-repeat bg-cover rounded bg-center"
       ></div>
+    </div>
+
+    <div v-else class="absolute flex justify-center items-center inset-0">
+      <v-icon name="la-spinner-solid" scale="5" animation="spin-pulse" />
     </div>
   </main>
 </template>
