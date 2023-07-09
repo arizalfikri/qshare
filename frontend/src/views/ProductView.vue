@@ -198,7 +198,7 @@ export default {
             <input
               type="text"
               name="price"
-              placeholder="ext: 200000"
+              placeholder="exp: 200000"
               class="w-full"
               v-model="product.price"
             />
